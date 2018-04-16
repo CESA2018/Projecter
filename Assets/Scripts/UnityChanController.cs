@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class UnityChanController : MonoBehaviour {
 
+    // リジッドボディ
     Rigidbody m_rigidbody;
 
+    // ジャンプフラグ
     private bool _jumpState = false;
 
     [SerializeField]
@@ -13,14 +16,15 @@ public class UnityChanController : MonoBehaviour {
 
     private CharacterController _Controller;
 
+    // 方向
     private Vector3 _moveDirection;
 
+    // ジャンプ力
     [SerializeField]
     private float _jumpPower = 1f;
 
 
-    // 速度
-    //[SerializeField]
+    // 現在の速度
     private Vector3 _speed = new Vector3(0, 0, 0);
 
     // 制限速度
@@ -33,6 +37,9 @@ public class UnityChanController : MonoBehaviour {
 
     // 回転量
     private float _rotBuf;
+
+    // 前のフレームのキー情報
+    private string _oldKey; 
 
     // Use this for initialization
     void Start()
@@ -62,32 +69,154 @@ public class UnityChanController : MonoBehaviour {
         m_rigidbody.transform.rotation *= Quaternion.Euler(new Vector3(0.0f, mouse_move_x, 0.0f));
         m_camera.transform.rotation *= Quaternion.Euler(new Vector3(-mouse_move_y, 0.0f, 0.0f));
 
+        // キー情報の更新
+        DownKeyCheck();
     }
 
-    
+
     private void Move()
     {
         // 移動処理
+        //// Sボタンを押下している
+        //if (Input.GetKey(KeyCode.S))
+        //{
+        //    // 前フレームと同じキーを押しているなら後方に加速
+        //    if (_oldKey == KeyCode.S.ToString())
+        //    {
+        //        if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
+        //        {
+        //            // 制限速度まで加速
+        //            _speed.z -= _accel.z;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // 速度の初期化
+        //        _speed = new Vector3(_speed.x, _speed.y, 0);
+        //    }
+        //}
+
         // Sボタンを押下している
-        if (Input.GetKey(KeyCode.S) && _speed.z <= _limit)
+        if (Input.GetKey(KeyCode.S))
         {
-            _speed.z -= _accel.z;
+            if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
+            {
+                // 制限速度まで加速
+                _speed.z -= _accel.z;
+            }
+
+            if (_oldKey == KeyCode.W.ToString())
+            {
+                // 速度の初期化
+                _speed = new Vector3(_speed.x, _speed.y, 0);
+            }
         }
+
+
         // Wボタンを押下している
-        if (Input.GetKey(KeyCode.W) && Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
+        //if (Input.GetKey(KeyCode.W))
+        //{
+        //    // 前フレームと同じキーを押しているなら前方に加速
+        //    if (_oldKey == KeyCode.W.ToString())
+        //    {
+        //        if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
+        //        {
+        //            // 制限速度まで加速
+        //            _speed.z += _accel.z;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // 速度の初期化
+        //        _speed = new Vector3(_speed.x, _speed.y, 0);
+        //    }
+        //}
+
+        if (Input.GetKey(KeyCode.W))
         {
-            _speed.z += _accel.z;
+            if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
+            {
+                // 制限速度まで加速
+                _speed.z += _accel.z;
+            }
+            if (_oldKey == KeyCode.S.ToString())
+            {
+                // 速度の初期化
+                _speed = new Vector3(_speed.x, _speed.y, 0);
+            }
         }
+
+
         // Dボタンを押下している
-        if (Input.GetKey(KeyCode.D) && Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
+        //if (Input.GetKey(KeyCode.D))
+        //{
+        //    // 前フレームと同じキーを押しているなら右方に加速
+        //    if (_oldKey == KeyCode.D.ToString())
+        //    {
+        //        if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
+        //        {
+        //            // 制限速度まで加速
+        //            _speed.x += _accel.x;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // 速度の初期化
+        //        _speed = new Vector3(0, _speed.y, _speed.z);
+        //    }
+        //}
+
+        if (Input.GetKey(KeyCode.D))
         {
-            _speed.x += _accel.x;
+            if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
+            {
+                // 制限速度まで加速
+                _speed.x += _accel.x;
+            }
+            if (_oldKey == KeyCode.A.ToString())
+            {
+                // 速度の初期化
+                _speed = new Vector3(0, _speed.y, _speed.z);
+            }
         }
+
+
         // Aボタンを押下している
-        if (Input.GetKey(KeyCode.A) && Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
+        //if (Input.GetKey(KeyCode.A))
+        //{
+        //    // 前フレームと同じキーを押しているなら左方に加速
+        //    if (_oldKey == KeyCode.A.ToString())
+        //    {
+        //        if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
+        //        {
+        //            // 制限速度まで加速
+        //            _speed.x -= _accel.x;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // 速度の初期化
+        //        _speed = new Vector3(0, _speed.y, _speed.z);
+        //    }
+        //}
+
+        if (Input.GetKey(KeyCode.A))
         {
-            _speed.x -= _accel.x;
+            // 前フレームと同じキーを押しているなら左方に加速
+            {
+            if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
+            {
+                // 制限速度まで加速
+                _speed.x -= _accel.x;
+            }
+            }
+            if (_oldKey == KeyCode.D.ToString())
+            {
+                // 速度の初期化
+                _speed = new Vector3(0, _speed.y, _speed.z);
+            }
         }
+
 
         // 速度を代入
         transform.Translate(_speed.x, 0, _speed.z);
@@ -140,7 +269,7 @@ public class UnityChanController : MonoBehaviour {
             _moveDirection.y = -10;
         }
 
-        Debug.Log(_moveDirection);
+        //Debug.Log(_moveDirection);
     }
 
     // 減速処理
@@ -156,8 +285,31 @@ public class UnityChanController : MonoBehaviour {
         }
     }
 
+    // リセット処理
     public void ResetVelocity()
     {
         _speed = new Vector3(0,0,0);
+    }
+
+    // キー入力チェック関数
+    void DownKeyCheck()
+    {
+        if (Input.anyKeyDown)
+        {
+            foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(code))
+                {
+                    if (code == KeyCode.Space)
+                    {
+                        break;
+                    }
+                    //処理を書く
+                    Debug.Log(code);
+                    _oldKey = code.ToString();
+                    break;
+                }
+            }
+        }
     }
 }
