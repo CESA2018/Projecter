@@ -8,20 +8,15 @@ public class UnityChanController : MonoBehaviour {
     // リジッドボディ
     Rigidbody m_rigidbody;
 
-    // ジャンプフラグ
-    private bool _jumpState = false;
-
     [SerializeField]
     private GameObject m_camera;
-
-    private CharacterController _Controller;
 
     // 方向
     private Vector3 _moveDirection;
 
     // ジャンプ力
     [SerializeField]
-    private float _jumpPower = 1f;
+    private float _jumpPower = 250f;
 
 
     // 現在の速度
@@ -39,25 +34,25 @@ public class UnityChanController : MonoBehaviour {
     private float _rotBuf;
 
     // 前のフレームのキー情報
-    private string _oldKey; 
+    private string _oldKey;
+
+    private bool _isGround = false;
 
     // Use this for initialization
     void Start()
     {
-        _Controller = GetComponent<CharacterController>();
-
+        DontDestroyOnLoad(gameObject);
         // 自分のRigidbodyを取ってくる
         m_rigidbody = GetComponent<Rigidbody>();
-
     }
 
     // Update is called once per frame
     void Update()
     {
+        CheckGround();
         Move();
         Deceleration();
         Jump();
-        AddGravity();
 
         float sensitivity = 2.0f; // いわゆるマウス感度
         float mouse_move_x = Input.GetAxis("Mouse X") * sensitivity;
@@ -69,6 +64,8 @@ public class UnityChanController : MonoBehaviour {
         m_rigidbody.transform.rotation *= Quaternion.Euler(new Vector3(0.0f, mouse_move_x, 0.0f));
         m_camera.transform.rotation *= Quaternion.Euler(new Vector3(-mouse_move_y, 0.0f, 0.0f));
 
+        Debug.Log(_isGround);
+
         // キー情報の更新
         DownKeyCheck();
     }
@@ -77,25 +74,6 @@ public class UnityChanController : MonoBehaviour {
     private void Move()
     {
         // 移動処理
-        //// Sボタンを押下している
-        //if (Input.GetKey(KeyCode.S))
-        //{
-        //    // 前フレームと同じキーを押しているなら後方に加速
-        //    if (_oldKey == KeyCode.S.ToString())
-        //    {
-        //        if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
-        //        {
-        //            // 制限速度まで加速
-        //            _speed.z -= _accel.z;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // 速度の初期化
-        //        _speed = new Vector3(_speed.x, _speed.y, 0);
-        //    }
-        //}
-
         // Sボタンを押下している
         if (Input.GetKey(KeyCode.S))
         {
@@ -114,24 +92,6 @@ public class UnityChanController : MonoBehaviour {
 
 
         // Wボタンを押下している
-        //if (Input.GetKey(KeyCode.W))
-        //{
-        //    // 前フレームと同じキーを押しているなら前方に加速
-        //    if (_oldKey == KeyCode.W.ToString())
-        //    {
-        //        if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
-        //        {
-        //            // 制限速度まで加速
-        //            _speed.z += _accel.z;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // 速度の初期化
-        //        _speed = new Vector3(_speed.x, _speed.y, 0);
-        //    }
-        //}
-
         if (Input.GetKey(KeyCode.W))
         {
             if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
@@ -148,24 +108,6 @@ public class UnityChanController : MonoBehaviour {
 
 
         // Dボタンを押下している
-        //if (Input.GetKey(KeyCode.D))
-        //{
-        //    // 前フレームと同じキーを押しているなら右方に加速
-        //    if (_oldKey == KeyCode.D.ToString())
-        //    {
-        //        if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
-        //        {
-        //            // 制限速度まで加速
-        //            _speed.x += _accel.x;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // 速度の初期化
-        //        _speed = new Vector3(0, _speed.y, _speed.z);
-        //    }
-        //}
-
         if (Input.GetKey(KeyCode.D))
         {
             if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
@@ -182,24 +124,6 @@ public class UnityChanController : MonoBehaviour {
 
 
         // Aボタンを押下している
-        //if (Input.GetKey(KeyCode.A))
-        //{
-        //    // 前フレームと同じキーを押しているなら左方に加速
-        //    if (_oldKey == KeyCode.A.ToString())
-        //    {
-        //        if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
-        //        {
-        //            // 制限速度まで加速
-        //            _speed.x -= _accel.x;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // 速度の初期化
-        //        _speed = new Vector3(0, _speed.y, _speed.z);
-        //    }
-        //}
-
         if (Input.GetKey(KeyCode.A))
         {
             // 前フレームと同じキーを押しているなら左方に加速
@@ -216,7 +140,6 @@ public class UnityChanController : MonoBehaviour {
                 _speed = new Vector3(0, _speed.y, _speed.z);
             }
         }
-
 
         // 速度を代入
         transform.Translate(_speed.x, 0, _speed.z);
@@ -236,40 +159,20 @@ public class UnityChanController : MonoBehaviour {
                 _speed.z = 0f;
             }
         }
-
     }
 
     // ジャンプ処理
     private void Jump()
     {
-        if (_Controller.isGrounded)
+        if (_isGround == true)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _moveDirection.y = _jumpPower;
+                //_moveDirection.y = _jumpPower;
 
-                _jumpState = true;
-            }
-            else
-            {
-                _jumpState = false;
+                m_rigidbody.AddForce(Vector3.up * _jumpPower);
             }
         }
-        //Debug.Log(_jumpState);
-    }
-
-    // 重力処理
-    private void AddGravity()
-    {
-        _moveDirection.y -= 10 * Time.deltaTime;
-        _Controller.Move(_moveDirection * Time.deltaTime);
-
-        if (_moveDirection.y < -10)
-        {
-            _moveDirection.y = -10;
-        }
-
-        //Debug.Log(_moveDirection);
     }
 
     // 減速処理
@@ -308,6 +211,31 @@ public class UnityChanController : MonoBehaviour {
                     Debug.Log(code);
                     _oldKey = code.ToString();
                     break;
+                }
+            }
+        }
+    }
+
+    private void CheckGround()
+    {
+        float dis;
+        // 真下にrayを飛ばす
+        var ray = new Ray(transform.position + Vector3.up * 0.8f, Vector3.down);
+
+        RaycastHit hit;
+        if (Physics.Raycast(ray,out hit))
+        {
+            if (hit.transform.name == "Stage")
+            {
+                dis = hit.distance;
+
+                if (dis < 0.9f)
+                {
+                    _isGround = true;
+                }
+                else
+                {
+                    _isGround = false;
                 }
             }
         }
