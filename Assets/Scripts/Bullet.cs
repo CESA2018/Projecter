@@ -25,10 +25,18 @@ public class Bullet : MonoBehaviour {
 
 // Update is called once per frame
 void Update () {
-        //  isKinematic
+        //  正面に移動する
         rb.transform.Translate(Vector3.forward * m_speed);
 
-        //rb.velocity = Vector3.forward * m_speed;
+        //  だんだん小さくなっていく
+        //transform.localScale -= new Vector3(0.005f,0.005f,0.005f);
+        Debug.Log(transform.localScale);
+
+        if (transform.localScale.x <= 0)
+        {
+            Destroy(gameObject);
+        }
+
 	}
 
 
