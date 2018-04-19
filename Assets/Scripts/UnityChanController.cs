@@ -140,7 +140,7 @@ public class UnityChanController : MonoBehaviour {
             _moveDirection.y = -10;
         }
 
-        Debug.Log(_moveDirection);
+
     }
 
     // 減速処理
