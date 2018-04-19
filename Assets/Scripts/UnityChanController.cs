@@ -1,25 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class UnityChanController : MonoBehaviour {
 
-    // リジッドボディ
     Rigidbody m_rigidbody;
+
+    private bool _jumpState = false;
 
     [SerializeField]
     private GameObject m_camera;
 
-    // 方向
+    private CharacterController _Controller;
+
     private Vector3 _moveDirection;
 
-    // ジャンプ力
     [SerializeField]
-    private float _jumpPower = 250f;
+    private float _jumpPower = 1f;
 
 
-    // 現在の速度
+    // 速度
+    //[SerializeField]
     private Vector3 _speed = new Vector3(0, 0, 0);
 
     // 制限速度
@@ -33,26 +34,23 @@ public class UnityChanController : MonoBehaviour {
     // 回転量
     private float _rotBuf;
 
-    // 前のフレームのキー情報
-    private string _oldKey;
-
-    private bool _isGround = false;
-
     // Use this for initialization
     void Start()
     {
-        DontDestroyOnLoad(gameObject);
+        _Controller = GetComponent<CharacterController>();
+
         // 自分のRigidbodyを取ってくる
         m_rigidbody = GetComponent<Rigidbody>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        CheckGround();
         Move();
         Deceleration();
         Jump();
+        AddGravity();
 
         float sensitivity = 2.0f; // いわゆるマウス感度
         float mouse_move_x = Input.GetAxis("Mouse X") * sensitivity;
@@ -64,81 +62,31 @@ public class UnityChanController : MonoBehaviour {
         m_rigidbody.transform.rotation *= Quaternion.Euler(new Vector3(0.0f, mouse_move_x, 0.0f));
         m_camera.transform.rotation *= Quaternion.Euler(new Vector3(-mouse_move_y, 0.0f, 0.0f));
 
-        Debug.Log(_isGround);
-
-        // キー情報の更新
-        DownKeyCheck();
     }
 
-
+    
     private void Move()
     {
         // 移動処理
         // Sボタンを押下している
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) && _speed.z <= _limit)
         {
-            if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
-            {
-                // 制限速度まで加速
-                _speed.z -= _accel.z;
-            }
-
-            if (_oldKey == KeyCode.W.ToString())
-            {
-                // 速度の初期化
-                _speed = new Vector3(_speed.x, _speed.y, 0);
-            }
+            _speed.z -= _accel.z;
         }
-
-
         // Wボタンを押下している
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) && Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
         {
-            if (Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
-            {
-                // 制限速度まで加速
-                _speed.z += _accel.z;
-            }
-            if (_oldKey == KeyCode.S.ToString())
-            {
-                // 速度の初期化
-                _speed = new Vector3(_speed.x, _speed.y, 0);
-            }
+            _speed.z += _accel.z;
         }
-
-
         // Dボタンを押下している
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
         {
-            if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
-            {
-                // 制限速度まで加速
-                _speed.x += _accel.x;
-            }
-            if (_oldKey == KeyCode.A.ToString())
-            {
-                // 速度の初期化
-                _speed = new Vector3(0, _speed.y, _speed.z);
-            }
+            _speed.x += _accel.x;
         }
-
-
         // Aボタンを押下している
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
         {
-            // 前フレームと同じキーを押しているなら左方に加速
-            {
-            if (Mathf.Abs(_speed.x) <= Mathf.Abs(_limit))
-            {
-                // 制限速度まで加速
-                _speed.x -= _accel.x;
-            }
-            }
-            if (_oldKey == KeyCode.D.ToString())
-            {
-                // 速度の初期化
-                _speed = new Vector3(0, _speed.y, _speed.z);
-            }
+            _speed.x -= _accel.x;
         }
 
         // 速度を代入
@@ -159,20 +107,40 @@ public class UnityChanController : MonoBehaviour {
                 _speed.z = 0f;
             }
         }
+
     }
 
     // ジャンプ処理
     private void Jump()
     {
-        if (_isGround == true)
+        if (_Controller.isGrounded)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                //_moveDirection.y = _jumpPower;
+                _moveDirection.y = _jumpPower;
 
-                m_rigidbody.AddForce(Vector3.up * _jumpPower);
+                _jumpState = true;
+            }
+            else
+            {
+                _jumpState = false;
             }
         }
+        //Debug.Log(_jumpState);
+    }
+
+    // 重力処理
+    private void AddGravity()
+    {
+        _moveDirection.y -= 10 * Time.deltaTime;
+        _Controller.Move(_moveDirection * Time.deltaTime);
+
+        if (_moveDirection.y < -10)
+        {
+            _moveDirection.y = -10;
+        }
+
+
     }
 
     // 減速処理
@@ -188,56 +156,8 @@ public class UnityChanController : MonoBehaviour {
         }
     }
 
-    // リセット処理
     public void ResetVelocity()
     {
         _speed = new Vector3(0,0,0);
-    }
-
-    // キー入力チェック関数
-    void DownKeyCheck()
-    {
-        if (Input.anyKeyDown)
-        {
-            foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyDown(code))
-                {
-                    if (code == KeyCode.Space)
-                    {
-                        break;
-                    }
-                    //処理を書く
-                    Debug.Log(code);
-                    _oldKey = code.ToString();
-                    break;
-                }
-            }
-        }
-    }
-
-    private void CheckGround()
-    {
-        float dis;
-        // 真下にrayを飛ばす
-        var ray = new Ray(transform.position + Vector3.up * 0.8f, Vector3.down);
-
-        RaycastHit hit;
-        if (Physics.Raycast(ray,out hit))
-        {
-            if (hit.transform.name == "Stage")
-            {
-                dis = hit.distance;
-
-                if (dis < 0.9f)
-                {
-                    _isGround = true;
-                }
-                else
-                {
-                    _isGround = false;
-                }
-            }
-        }
     }
 }
