@@ -42,6 +42,8 @@ public class UnityChanController : MonoBehaviour {
         // 自分のRigidbodyを取ってくる
         m_rigidbody = GetComponent<Rigidbody>();
 
+        DontDestroyOnLoad(gameObject);
+
     }
 
     // Update is called once per frame
