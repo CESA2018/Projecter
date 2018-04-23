@@ -69,7 +69,7 @@ public class UnityChanController : MonoBehaviour {
     {
         // 移動処理
         // Sボタンを押下している
-        if (Input.GetKey(KeyCode.S) && _speed.z <= _limit)
+        if (Input.GetKey(KeyCode.S) && Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
         {
             _speed.z -= _accel.z;
         }
