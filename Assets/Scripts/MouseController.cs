@@ -19,7 +19,6 @@ public class MouseController : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        Cursor.lockState = CursorLockMode.Locked;
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -87,11 +86,11 @@ public class MouseController : MonoBehaviour
                 //  タグがステージ
                 if (hit.collider.tag == "Stage")
                 {
-                    //  法線を取得して鏡を壁と垂直に置く
-                    GameObject newMirror = GameObject.Instantiate(m_mirror);
-                    newMirror.name = "Mirror";
-                    newMirror.transform.position = hit.point;
-                    newMirror.transform.rotation = Quaternion.LookRotation(-hit.normal);
+                    ////  法線を取得して鏡を壁と垂直に置く
+                    //GameObject newMirror = GameObject.Instantiate(m_mirror);
+                    //newMirror.name = "Mirror";
+                    //newMirror.transform.position = hit.point;
+                    //newMirror.transform.rotation = Quaternion.LookRotation(-hit.normal);
 
                 }
             }

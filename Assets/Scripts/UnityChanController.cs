@@ -42,6 +42,8 @@ public class UnityChanController : MonoBehaviour {
         // 自分のRigidbodyを取ってくる
         m_rigidbody = GetComponent<Rigidbody>();
 
+        DontDestroyOnLoad(gameObject);
+
     }
 
     // Update is called once per frame
@@ -69,7 +71,7 @@ public class UnityChanController : MonoBehaviour {
     {
         // 移動処理
         // Sボタンを押下している
-        if (Input.GetKey(KeyCode.S) && _speed.z <= _limit)
+        if (Input.GetKey(KeyCode.S) && Mathf.Abs(_speed.z) <= Mathf.Abs(_limit))
         {
             _speed.z -= _accel.z;
         }
@@ -140,7 +142,7 @@ public class UnityChanController : MonoBehaviour {
             _moveDirection.y = -10;
         }
 
-        Debug.Log(_moveDirection);
+
     }
 
     // 減速処理
