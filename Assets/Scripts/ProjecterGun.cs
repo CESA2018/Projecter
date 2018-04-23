@@ -29,7 +29,7 @@ public class ProjecterGun : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             //  弾が存在していたら撃てない
-            //if (GameObject.Find("Bullet(Clone)") == null)
+            if (GameObject.Find("Bullet(Clone)") == null)
             {
                 //  Rayを飛ばす
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -51,6 +51,7 @@ public class ProjecterGun : MonoBehaviour
                 bullet.transform.position = m_shotPosition.transform.position;
                 //  プレイヤーの向いてる角度に向ける
                 bullet.transform.rotation = m_shotPosition.transform.rotation;
+
             }
         }
     }
