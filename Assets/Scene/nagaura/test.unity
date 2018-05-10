@@ -294,11 +294,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0792ec121ec55104883a3f926e6c67dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rigidbody: {fileID: 1876519184}
-  m_camera: {fileID: 1876519183}
-  MOVING_SPEED: 2
-  MAXIMUM_SPEED: 4
-  ACCELERATION: 1.1
+  INITIAL_SPEED: 3
+  MAXIMUM_SPEED: 3
+  ACCELERATION: 1.01
   DECELERATION: 0.9
   SENSITIVITY: 2
+  m_rigidbody: {fileID: 1876519184}
+  m_camera: {fileID: 1876519183}
   m_movingVelocity: {x: 0, y: 0, z: 0}
