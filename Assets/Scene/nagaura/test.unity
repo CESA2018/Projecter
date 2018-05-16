@@ -222,6 +222,18 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: efbb75a6b61d1fa44a375c88fd760797, type: 2}
+    - target: {fileID: 4443237525954348, guid: bffb9fefdb27d63468ad918cdd5e9c7f, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4443237525954348, guid: bffb9fefdb27d63468ad918cdd5e9c7f, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4443237525954348, guid: bffb9fefdb27d63468ad918cdd5e9c7f, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bffb9fefdb27d63468ad918cdd5e9c7f, type: 2}
   m_IsPrefabParent: 0
@@ -264,6 +276,15 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 65891152304750248, guid: 02f58f0095db9d540ac82a31336019d5,
+        type: 2}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019386886893494, guid: 02f58f0095db9d540ac82a31336019d5, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114052469522806500, guid: 02f58f0095db9d540ac82a31336019d5, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 02f58f0095db9d540ac82a31336019d5, type: 2}
@@ -294,10 +315,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0792ec121ec55104883a3f926e6c67dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  INITIAL_SPEED: 3
-  MAXIMUM_SPEED: 3
-  ACCELERATION: 1.01
+  MOVING_SPEED: 4
   DECELERATION: 0.9
+  JUMP_POWER: 5
+  GRAVITY_ACCELERATION: -9
   SENSITIVITY: 2
   m_rigidbody: {fileID: 1876519184}
   m_camera: {fileID: 1876519183}
