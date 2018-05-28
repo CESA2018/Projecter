@@ -5,12 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/Title.unity
     guid: 6f5dca46f28df454ca6c61ef4a5e22db
-  - enabled: 1
-    path: Assets/Scene/test.unity
-    guid: 969b1fb4dbedf8a449ef686f77fab79d
-  - enabled: 1
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/Scene/Clear.unity
     guid: 62c0dfc22359c8141aafe946708dba83
+  - enabled: 1
+    path: Assets/Scene/nagaura/test.unity
+    guid: cddee140ad3dbb546af01b3998650ebd
+  - enabled: 1
+    path: Assets/Scene/nagaura/test2.unity
+    guid: 1ef4498da1bf5bf418ce55cc84d11e14

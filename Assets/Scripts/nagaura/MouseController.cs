@@ -27,6 +27,18 @@ public class MouseController : MonoBehaviour
             // プレイヤーから向いている方向にレイを飛ばす
             if (Physics.Raycast(ray, out phit))
             {
+                if (phit.transform.CompareTag("Palette"))
+                {
+                    if (phit.collider.GetComponent<MeshRenderer>().material.color != Color.white)
+                    {
+                        m_player.GetComponent<PlayerController>().SetColor(phit.collider.GetComponent<MeshRenderer>().material.color);
+                        phit.collider.GetComponent<MeshRenderer>().material.color = Color.white;
+                    }
+                }
+                if (phit.transform.CompareTag("Battery"))
+                {
+                    phit.collider.GetComponent<MeshRenderer>().material.color = m_player.GetComponent<PlayerController>().GetColor();
+                }
                 if (phit.transform.tag == ("Mirror"))
                 {
                     // プレイヤーから衝突点へのベクトル

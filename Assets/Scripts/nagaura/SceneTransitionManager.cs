@@ -5,6 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class SceneTransitionManager : MonoBehaviour
 {
+    struct StorageTransform
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 scale;
+
+        public StorageTransform(Transform transform)
+        {
+            position = transform.localPosition;
+            rotation = transform.localRotation;
+            scale = transform.localScale;
+        }
+    }
+
+    static private Dictionary<string, StorageTransform> m_gameObjects = new Dictionary<string, StorageTransform>();
 
     // Use this for initialization
     void Start()
@@ -18,13 +33,23 @@ public class SceneTransitionManager : MonoBehaviour
 
     }
 
+    static public void SaveGameObject(string name)
+    {
+        StorageTransform storage = new StorageTransform(GameObject.Find(name).transform);
+        m_gameObjects.Add(name, storage);
+    }
+
+    static public void LoadGameObject(string name)
+    {
+        Transform transform = GameObject.Find(name).transform;
+        transform.localPosition = m_gameObjects[name].position;
+        transform.localRotation = m_gameObjects[name].rotation;
+        transform.localScale = m_gameObjects[name].scale;
+        m_gameObjects.Remove(name);
+    }
+
     static public void TransScene(string scene)
     {
         SceneManager.LoadScene(scene);
-    }
-
-    public void TransPlayScene()
-    {
-        SceneManager.LoadScene("test");
     }
 }
